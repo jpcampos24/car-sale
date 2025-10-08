@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {MyTradingPlaceApplication} from './application';
 
 export async function migrate(args: string[]) {
