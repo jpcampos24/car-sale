@@ -36,12 +36,10 @@ export class AuthService implements IUserService<User, EmailCredentials> {
   }
 
   convertToUserProfile(user: User): UserProfile {
-    // Simplificamos el perfil, puedes añadir más campos si los necesitas.
     const userProfile = {
-      [securityId]: user.id!.toString(), // Es crucial para la seguridad de LoopBack
+      [securityId]: user.id!.toString(),
       id: user.id,
       email: user.email,
-      // puedes agregar más propiedades aquí, como nombre, roles, etc.
     };
     return userProfile;
   }
