@@ -25,7 +25,7 @@ export class AuthController {
     this.authService = new AuthService(this.userRepository);
   }
 
-  @post('/login', {
+  @post('api/v1/login', {
     responses: {
       '200': {
         description: 'Token',
