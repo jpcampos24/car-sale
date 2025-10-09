@@ -3,6 +3,8 @@ import {repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {UserProfile, securityId} from '@loopback/security';
 import {compare} from 'bcryptjs';
+import {sign} from 'jsonwebtoken';
+import type {StringValue} from "ms";
 import {EmailCredentials, User} from '../models';
 import {UserRepository} from '../repositories';
 
@@ -42,5 +44,16 @@ export class AuthService implements IUserService<User, EmailCredentials> {
       email: user.email,
     };
     return userProfile;
+  }
+
+  generateToken(payload: object, expiresIn: StringValue): string {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new HttpErrors.InternalServerError('No se ha configurado el secreto de JWT.');
+    }
+
+    return sign(payload, jwtSecret, {
+      expiresIn: expiresIn,
+    });
   }
 }

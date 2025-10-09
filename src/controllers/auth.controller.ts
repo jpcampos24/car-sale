@@ -1,13 +1,6 @@
-import {TokenService} from '@loopback/authentication';
-import {
-  TokenServiceBindings
-} from '@loopback/authentication-jwt';
-import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {
-  post,
-  requestBody
-} from '@loopback/rest';
+import {post, requestBody} from '@loopback/rest';
+import {securityId} from '@loopback/security';
 import {EmailCredentials} from '../models';
 import {UserRepository} from '../repositories';
 import {AuthService} from '../services/auth.service';
@@ -17,8 +10,6 @@ export class AuthController {
   private authService: AuthService;
 
   constructor(
-    @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: TokenService,
     @repository(UserRepository)
     public userRepository: UserRepository,
   ) {
@@ -28,15 +19,14 @@ export class AuthController {
   @post('api/v1/auth/login', {
     responses: {
       '200': {
-        description: 'Token',
+        description: 'Access Token y Refresh Token',
         content: {
           'application/json': {
             schema: {
               type: 'object',
               properties: {
-                token: {
-                  type: 'string',
-                },
+                tokenJWT: {type: 'string'},
+                refreshToken: {type: 'string'},
               },
             },
           },
@@ -46,11 +36,13 @@ export class AuthController {
   })
   async login(
     @requestBody() credentials: EmailCredentials,
-  ): Promise<{token: string}> {
+  ): Promise<{tokenJWT: string, refreshToken: string}> {
     const user = await this.authService.verifyCredentials(credentials);
     const userProfile = this.authService.convertToUserProfile(user);
-    const token = await this.jwtService.generateToken(userProfile);
+    const refreshTokenPayload = { id: userProfile[securityId] };
+    const tokenJWT = this.authService.generateToken(userProfile, '1h');
+    const refreshToken = this.authService.generateToken(refreshTokenPayload, '8h');
 
-    return {token};
+    return {tokenJWT, refreshToken};
   }
 }
