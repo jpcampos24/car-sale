@@ -51,7 +51,6 @@ export class MyTradingPlaceApplication extends BootMixin(
       throw new Error('La variable de entorno JWT_SECRET debe estar definida.');
     }
 
-    //this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.JWT_SECRET);
     this.component(AuthenticationComponent);
     this.dataSource(MySqlDataSource, UserServiceBindings.DATASOURCE_NAME);
 
