@@ -1,23 +1,22 @@
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  TokenServiceBindings,
+  UserServiceBindings
+} from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {MySequence} from './sequence';
-import {AuthenticationComponent} from '@loopback/authentication';
-import {
-  JWTAuthenticationComponent,
-  SECURITY_SCHEME_SPEC,
-  User,
-  TokenServiceBindings,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
+import {JWTStrategy} from './authentication/jwt-strategy';
 import {MySqlDataSource} from './datasources';
+import {MySequence} from './sequence';
 
 export {ApplicationConfig};
 
@@ -58,5 +57,7 @@ export class MyTradingPlaceApplication extends BootMixin(
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
     this.dataSource(MySqlDataSource, UserServiceBindings.DATASOURCE_NAME);
+
+    registerAuthenticationStrategy(this, JWTStrategy);
   }
 }
