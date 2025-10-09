@@ -5,7 +5,7 @@ import {UserProfile, securityId} from '@loopback/security';
 import {compare} from 'bcryptjs';
 import {sign} from 'jsonwebtoken';
 import type {StringValue} from "ms";
-import {DocumentCredentials, User} from '../models';
+import {DocumentCredentials, EmailCredentials, User} from '../models';
 import {UserRepository} from '../repositories';
 
 export class AuthService implements IUserService<User, DocumentCredentials> {
@@ -13,25 +13,36 @@ export class AuthService implements IUserService<User, DocumentCredentials> {
     @repository(UserRepository) public userRepository: UserRepository,
   ) {}
 
-
   async verifyCredentials(credentials: DocumentCredentials): Promise<User> {
+    return this._verifyUserByField({document: credentials.document}, credentials.password);
+  }
+
+  async verifyCredentialsByEmail(credentials: EmailCredentials): Promise<User> {
+    return this._verifyUserByField({email: credentials.email}, credentials.password);
+  }
+
+  private async _verifyUserByField(
+    whereCondition: {[key: string]: string},
+    password: string,
+  ): Promise<User> {
+
     const foundUser = await this.userRepository.findOne({
-      where: {document: credentials.document},
+      where: whereCondition,
     });
 
     if (!foundUser) {
+      const fieldName = Object.keys(whereCondition)[0];
+      const fieldValue = Object.values(whereCondition)[0];
+
       throw new HttpErrors.Unauthorized(
-        `El usuario con el documento ${credentials.document} no fue encontrado.`,
+        `El usuario con ${fieldName} '${fieldValue}' no fue encontrado.`,
       );
     }
 
-    const passwordMatched = await compare(
-      credentials.password,
-      foundUser.password,
-    );
+    const passwordMatched = await compare(password, foundUser.password);
 
     if (!passwordMatched) {
-      throw new HttpErrors.Unauthorized('La contraseña es incorrecta.');
+      throw new HttpErrors.Unauthorized('Datos incorrectos.');
     }
 
     return foundUser;
