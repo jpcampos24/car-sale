@@ -1,7 +1,7 @@
 import {repository} from '@loopback/repository';
 import {post, requestBody} from '@loopback/rest';
 import {securityId} from '@loopback/security';
-import {EmailCredentials} from '../models';
+import {DocumentCredentials} from '../models';
 import {UserRepository} from '../repositories';
 import {AuthService} from '../services/auth.service';
 
@@ -35,7 +35,7 @@ export class AuthController {
     },
   })
   async login(
-    @requestBody() credentials: EmailCredentials,
+    @requestBody() credentials: DocumentCredentials,
   ): Promise<{tokenJWT: string, refreshToken: string}> {
     const user = await this.authService.verifyCredentials(credentials);
     const userProfile = this.authService.convertToUserProfile(user);

@@ -5,23 +5,23 @@ import {UserProfile, securityId} from '@loopback/security';
 import {compare} from 'bcryptjs';
 import {sign} from 'jsonwebtoken';
 import type {StringValue} from "ms";
-import {EmailCredentials, User} from '../models';
+import {DocumentCredentials, User} from '../models';
 import {UserRepository} from '../repositories';
 
-export class AuthService implements IUserService<User, EmailCredentials> {
+export class AuthService implements IUserService<User, DocumentCredentials> {
   constructor(
     @repository(UserRepository) public userRepository: UserRepository,
   ) {}
 
 
-  async verifyCredentials(credentials: EmailCredentials): Promise<User> {
+  async verifyCredentials(credentials: DocumentCredentials): Promise<User> {
     const foundUser = await this.userRepository.findOne({
-      where: {email: credentials.email},
+      where: {document: credentials.document},
     });
 
     if (!foundUser) {
       throw new HttpErrors.Unauthorized(
-        `El usuario con el email ${credentials.email} no fue encontrado.`,
+        `El usuario con el documento ${credentials.document} no fue encontrado.`,
       );
     }
 
