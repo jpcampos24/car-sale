@@ -81,7 +81,7 @@ export class AuthController {
    @post('/api/v1/auth/validate', {
     responses: {
       '200': {
-        description: 'El token es válido. Devuelve el perfil del usuario.',
+        description: 'El token es válido. Devuelve el id del usuario.',
         content: {
           'application/json': {
             schema: {
