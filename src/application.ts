@@ -1,7 +1,5 @@
 import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {
-  JWTAuthenticationComponent,
-  TokenServiceBindings,
   UserServiceBindings
 } from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
@@ -53,9 +51,8 @@ export class MyTradingPlaceApplication extends BootMixin(
       throw new Error('La variable de entorno JWT_SECRET debe estar definida.');
     }
 
-    this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.JWT_SECRET);
+    //this.bind(TokenServiceBindings.TOKEN_SECRET).to(process.env.JWT_SECRET);
     this.component(AuthenticationComponent);
-    this.component(JWTAuthenticationComponent);
     this.dataSource(MySqlDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     registerAuthenticationStrategy(this, JWTStrategy);

@@ -60,6 +60,8 @@ export class JWTStrategy implements AuthenticationStrategy {
 
     try {
       const secret = process.env.JWT_SECRET;
+      console.log('--- SECRETO USADO PARA VERIFICAR (en JWTStrategy):', `"${secret}"`);
+
       if (!secret) {
         throw new Error('La variable de entorno JWT_SECRET no está definida.');
       }
