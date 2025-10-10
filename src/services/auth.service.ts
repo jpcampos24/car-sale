@@ -59,6 +59,7 @@ export class AuthService implements IUserService<User, DocumentCredentials> {
 
   generateToken(payload: object, expiresIn: StringValue): string {
     const jwtSecret = process.env.JWT_SECRET;
+
     if (!jwtSecret) {
       throw new HttpErrors.InternalServerError('No se ha configurado el secreto de JWT.');
     }

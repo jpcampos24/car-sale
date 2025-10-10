@@ -1,6 +1,8 @@
+import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {post, requestBody} from '@loopback/rest';
-import {securityId} from '@loopback/security';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {DocumentCredentials, EmailCredentials} from '../models';
 import {UserRepository} from '../repositories';
 import {AuthService} from '../services/auth.service';
@@ -74,5 +76,30 @@ export class AuthController {
     const refreshToken = this.authService.generateToken(refreshTokenPayload, '8h');
 
     return {tokenJWT, refreshToken};
+  }
+
+   @post('/api/v1/auth/validate', {
+    responses: {
+      '200': {
+        description: 'El token es válido. Devuelve el id del usuario.',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                isValid: {type: 'boolean'},
+                userId: {type: 'string'},
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  async validateToken(
+    @inject(SecurityBindings.USER) userProfile: UserProfile,
+  ): Promise<{isValid: boolean; userId: string}> {
+    return {isValid: true, userId: userProfile.id};
   }
 }
