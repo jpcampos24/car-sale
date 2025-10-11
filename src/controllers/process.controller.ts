@@ -1,11 +1,16 @@
 // En: src/controllers/process.controller.ts
 
 import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
 import {get} from '@loopback/rest';
+import {EmailService} from '../services/email.service';
 
-@authenticate('jwt')
+//@authenticate('jwt')
 export class ProcessController {
-  constructor() {}
+  constructor(
+    @inject('services.EmailService')
+    private emailService: EmailService,
+  ) {}
 
   @get('/api/v1/process/restricted', {
     responses: {
@@ -56,5 +61,23 @@ export class ProcessController {
       version: 'v2',
       message: 'Acceso exitoso.',
     };
+  }
+
+  @get('/sendEmail')
+  async sendTestEmail() {
+    const mailOptions = {
+      from: '"Tu App" <${process.env.SMTP_USER}>', // Dirección del remitente
+      to: 'anonimusa415@gmail.com',
+      subject: '¡Correo de prueba desde LoopBack!',
+      html: '<b>Hola mundo?</b><p>Este es un correo enviado desde nuestra aplicación.</p>',
+    };
+
+    try {
+      const info = await this.emailService.sendMail(mailOptions);
+      console.log('URL de previsualización del correo:', info.previewURL);
+      return {success: true, message: 'Correo enviado a Ethereal para previsualización. Revisa tu consola.'};
+    } catch (error) {
+      return {success: false, message: 'Error al enviar el correo.', error: error.message};
+    }
   }
 }
