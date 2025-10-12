@@ -1,5 +1,3 @@
-// En: src/controllers/process.controller.ts
-
 import {authenticate} from '@loopback/authentication';
 import {get} from '@loopback/rest';
 

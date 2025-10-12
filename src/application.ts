@@ -15,6 +15,7 @@ import path from 'path';
 import {JWTStrategy} from './authentication/jwt-strategy';
 import {MySqlDataSource} from './datasources';
 import {MySequence} from './sequence';
+import {EmailService} from './services/email.service';
 
 export {ApplicationConfig};
 
@@ -53,6 +54,7 @@ export class MyTradingPlaceApplication extends BootMixin(
 
     this.component(AuthenticationComponent);
     this.dataSource(MySqlDataSource, UserServiceBindings.DATASOURCE_NAME);
+    this.bind('services.EmailService').toClass(EmailService);
 
     registerAuthenticationStrategy(this, JWTStrategy);
   }
