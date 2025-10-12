@@ -103,4 +103,3 @@ export class AuthController {
     return {isValid: true, userId: userProfile.id};
   }
 }
-

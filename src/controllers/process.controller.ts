@@ -1,14 +1,9 @@
 import {authenticate} from '@loopback/authentication';
-import {inject} from '@loopback/core';
 import {get} from '@loopback/rest';
-import {EmailService} from '../services/email.service';
 
 @authenticate('jwt')
 export class ProcessController {
-  constructor(
-    @inject('services.EmailService')
-    private emailService: EmailService,
-  ) {}
+  constructor() {}
 
   @get('/api/v1/process/restricted', {
     responses: {
