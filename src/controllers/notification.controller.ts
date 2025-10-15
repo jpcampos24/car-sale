@@ -1,15 +1,20 @@
-import {authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
-import {post, requestBody} from '@loopback/rest';
-import {SecurityBindings, UserProfile} from '@loopback/security';
+import {repository} from '@loopback/repository';
+import {HttpErrors, post, requestBody} from '@loopback/rest';
 import {Notification} from '../models';
-import {NotificationService} from '../services';
+import {UserRepository, VerificationCodeRepository} from '../repositories';
+import {AuthService, NotificationService} from '../services';
 
-@authenticate('jwt')
 export class NotificationController {
+   private authService: AuthService;
+
   constructor(
+    @repository(UserRepository) public userRepository: UserRepository,
+    @repository(VerificationCodeRepository) public verificationCodeRepository: VerificationCodeRepository,
     @inject('services.NotificationService') private notificationService: NotificationService,
-  ) {}
+  ) {
+    this.authService = new AuthService(this.userRepository, this.verificationCodeRepository);
+  }
 
   @post('/api/v1/notifications/send', {
     responses: {
@@ -22,7 +27,6 @@ export class NotificationController {
     },
   })
   async sendNotification(
-    @inject(SecurityBindings.USER) userProfile: UserProfile,
     @requestBody({
       description: 'Datos de la notificación a enviar',
       required: true,
@@ -34,6 +38,12 @@ export class NotificationController {
     })
     notification: Notification,
   ) {
-    return await this.notificationService.send(notification, userProfile.id);
+    const user = await this.authService.findUserWithOrCondition(notification.destination);
+
+    if (!user.id) {
+      throw new HttpErrors.NotFound('Se ha presentado un error.');
+    }
+
+    return await this.notificationService.send(notification, user.id);
   }
 }

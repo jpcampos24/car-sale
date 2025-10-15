@@ -5,12 +5,13 @@ import {UserProfile, securityId} from '@loopback/security';
 import {compare} from 'bcryptjs';
 import {sign} from 'jsonwebtoken';
 import type {StringValue} from "ms";
-import {DocumentCredentials, EmailCredentials, User} from '../models';
-import {UserRepository} from '../repositories';
+import {DocumentCredentials, EmailCredentials, OtpLogin, User} from '../models';
+import {UserRepository, VerificationCodeRepository} from '../repositories';
 
 export class AuthService implements IUserService<User, DocumentCredentials> {
   constructor(
     @repository(UserRepository) public userRepository: UserRepository,
+    @repository(VerificationCodeRepository) public verificationCodeRepository: VerificationCodeRepository,
   ) {}
 
   async verifyCredentials(credentials: DocumentCredentials): Promise<User> {
@@ -19,6 +20,60 @@ export class AuthService implements IUserService<User, DocumentCredentials> {
 
   async verifyCredentialsByEmail(credentials: EmailCredentials): Promise<User> {
     return this._verifyUserByField({email: credentials.email}, credentials.password);
+  }
+
+  async verifyOtpCode(code: OtpLogin): Promise<User> {
+    const {otpCode} = code;
+
+    const otpRecord = await this.verificationCodeRepository.findOne({
+      where: {code: otpCode},
+    });
+
+    if (!otpRecord) {
+      throw new HttpErrors.Unauthorized('Código OTP no válido.');
+    }
+
+    const now = new Date();
+
+    if (otpRecord.expiration < now) {
+      await this._deleteVerificationCode(otpRecord.id);
+      throw new HttpErrors.Unauthorized('El código OTP ha expirado.');
+    }
+
+    const userId = otpRecord.userId;
+    await this._deleteVerificationCode(otpRecord.id);
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new HttpErrors.NotFound('Se ha presentado un error.');
+    }
+
+    return user
+  }
+
+  async findUserWithOrCondition(fieldValue: string): Promise<User> {
+    const uniqueFields: (keyof User)[] = [
+      'email',
+      'phone',
+    ];
+
+    const orConditions = uniqueFields.map(field => ({[field]: fieldValue}));
+
+    const user = await this.userRepository.findOne({
+      where: {
+        or: orConditions,
+      },
+    });
+
+    if (!user) {
+      throw new HttpErrors.NotFound('Se ha presentado un error.');
+    }
+
+    return user;
+  }
+
+  private async _deleteVerificationCode(id: number | undefined) {
+    await this.verificationCodeRepository.deleteById(id);
   }
 
   private async _verifyUserByField(
