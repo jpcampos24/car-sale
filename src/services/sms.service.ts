@@ -30,7 +30,7 @@ export class SmsService {
     channel: 'SMS' | 'WhatsApp',
   ): Promise<MessageInstance> {
     try {
-      const body = `Tu código de validación de acceso es: ${otp}`
+      const body = `Tu código de verificación de acceso es: ${otp}`
       const message = await this.twilioClient.messages.create({
         from: from,
         to: to,
