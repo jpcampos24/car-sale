@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
+import {VerificationCode} from './verification-code.model';
 
 @model()
 export class User extends Entity {
@@ -32,6 +33,8 @@ export class User extends Entity {
   })
   password: string;
 
+  @hasMany(() => VerificationCode)
+  verificationCodes: VerificationCode[];
 
   constructor(data?: Partial<User>) {
     super(data);
