@@ -5,3 +5,4 @@ export * from './otp-login.model';
 export * from './user.model';
 export * from './verification-code.model';
 
+export * from './crypto.model';
