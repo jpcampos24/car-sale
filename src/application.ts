@@ -12,7 +12,7 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {JWTStrategy} from './authentication/jwt-strategy';
+import {JWTAuthenticationStrategy} from './authentication/jwt';
 import {MySqlDataSource} from './datasources';
 import {MySequence} from './sequence';
 import {EmailService} from './services/email.service';
@@ -58,6 +58,6 @@ export class MyTradingPlaceApplication extends BootMixin(
     this.bind('services.EmailService').toClass(EmailService);
     this.bind('services.SmsService').toClass(SmsService);
 
-    registerAuthenticationStrategy(this, JWTStrategy);
+    registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
   }
 }

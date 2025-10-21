@@ -1,7 +1,7 @@
 import {Entity, model, property} from '@loopback/repository';
 
 @model()
-export class Crypto extends Entity {
+export class Product extends Entity {
   @property({
     type: 'number',
     id: true,
@@ -19,16 +19,16 @@ export class Crypto extends Entity {
     type: 'string',
     required: true,
   })
-  symbol: string;
+  description: string;
 
 
-  constructor(data?: Partial<Crypto>) {
+  constructor(data?: Partial<Product>) {
     super(data);
   }
 }
 
-export interface CryptoRelations {
+export interface ProductRelations {
   // describe navigational properties here
 }
 
-export type CryptoWithRelations = Crypto & CryptoRelations;
+export type ProductWithRelations = Product & ProductRelations;

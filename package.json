@@ -1,5 +1,5 @@
 {
-  "name": "my-trading-place-backend",
+  "name": "car-sale",
   "version": "0.0.1",
   "description": "cryptocurrency analysis for trading.",
   "keywords": [
@@ -17,8 +17,8 @@
     "pretest": "npm run rebuild",
     "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
     "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js",
-    "docker:build": "docker build -t my-trading-place-backend .",
-    "docker:run": "docker run -p 3000:3000 -d my-trading-place-backend",
+    "docker:build": "docker build -t car-sale .",
+    "docker:run": "docker run -p 3000:3000 -d car-sale",
     "premigrate": "npm run build",
     "migrate": "node ./dist/migrate",
     "preopenapi-spec": "npm run build",

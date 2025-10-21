@@ -1,4 +1,5 @@
 import {ApplicationConfig} from '@loopback/core';
+import 'dotenv/config';
 import {MyTradingPlaceApplication} from './application';
 
 /**

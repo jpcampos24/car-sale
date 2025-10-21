@@ -3,12 +3,12 @@ import {get} from '@loopback/rest';
 
 @authenticate('jwt')
 export class ProcessController {
-  constructor() {}
+  constructor() { }
 
-  @get('/api/v1/process/restricted', {
+  @get('/api/v1/process/secure-access', {
     responses: {
       '200': {
-        description: 'Respuesta exitosa del proceso restringido v1',
+        description: 'Acceso exitoso al proceso seguro versión 1',
         content: {
           'application/json': {
             schema: {
@@ -23,17 +23,17 @@ export class ProcessController {
       },
     },
   })
-  async restrictedProcessV1(): Promise<object> {
+  async handleSecureProcessV1(): Promise<object> {
     return {
       version: 'v1',
       message: 'Acceso exitoso.',
     };
   }
 
-  @get('/api/v2/process/restricted', {
+  @get('/api/v2/process/secure-access', {
     responses: {
       '200': {
-        description: 'Respuesta exitosa del proceso restringido v2',
+        description: 'Acceso exitoso al proceso seguro versión 2',
         content: {
           'application/json': {
             schema: {
@@ -49,7 +49,7 @@ export class ProcessController {
     },
   })
   @authenticate('jwt')
-  async restrictedProcessV2(): Promise<object> {
+  async handleSecureProcessV2(): Promise<object> {
     return {
       version: 'v2',
       message: 'Acceso exitoso.',

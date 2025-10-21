@@ -1,5 +1,5 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
-import {VerificationCode} from './verification-code.model';
+import {VerificationCode} from './OTP.model';
 
 @model()
 export class User extends Entity {

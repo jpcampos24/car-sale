@@ -6,7 +6,7 @@ import {UserRepository, VerificationCodeRepository} from '../repositories';
 import {AuthService, NotificationService} from '../services';
 
 export class NotificationController {
-   private authService: AuthService;
+  private authService: AuthService;
 
   constructor(
     @repository(UserRepository) public userRepository: UserRepository,
@@ -16,7 +16,7 @@ export class NotificationController {
     this.authService = new AuthService(this.userRepository, this.verificationCodeRepository);
   }
 
-  @post('/api/v1/notifications/send', {
+  @post('/api/v1/notifications/dispatch', {
     responses: {
       '200': {
         description: 'Notificación enviada exitosamente',
@@ -26,7 +26,7 @@ export class NotificationController {
       '404': {description: 'Usuario de destino no encontrado'},
     },
   })
-  async sendNotification(
+  async dispatchNotification(
     @requestBody({
       description: 'Datos de la notificación a enviar',
       required: true,
@@ -36,14 +36,14 @@ export class NotificationController {
         },
       },
     })
-    notification: Notification,
+    payload: Notification,
   ) {
-    const user = await this.authService.findUserWithOrCondition(notification.destination);
+    const recipient = await this.authService.findUserWithOrCondition(payload.destination);
 
-    if (!user.id) {
-      throw new HttpErrors.NotFound('Se ha presentado un error.');
+    if (!recipient.id) {
+      throw new HttpErrors.NotFound('Usuario de destino no encontrado.');
     }
 
-    return await this.notificationService.send(notification, user.id);
+    return await this.notificationService.send(payload, recipient.id);
   }
 }

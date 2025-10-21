@@ -2,7 +2,7 @@ import {Getter, inject} from '@loopback/core';
 import {DefaultCrudRepository, HasManyRepositoryFactory, repository} from '@loopback/repository';
 import {MySqlDataSource} from '../datasources';
 import {User, UserRelations, VerificationCode} from '../models';
-import {VerificationCodeRepository} from './verification-code.repository';
+import {VerificationCodeRepository} from './OTP.repository';
 
 export class UserRepository extends DefaultCrudRepository<
   User,

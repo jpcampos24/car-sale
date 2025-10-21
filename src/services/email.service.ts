@@ -19,12 +19,12 @@ export class EmailService {
     }
   }
 
-  async sendMail(destination: string, otp: string) {
+  async sendEmail(destination: string, otp: string) {
     const mailOptions = {
-      from: '"Tu App" <tavolopez.dev@gmail.com>',
+      from: '"Tu App" <juan.campos@ucp.edu.co>',
       to: destination,
-      subject: 'Código de verificación',
-      html: `<b>Tu código de verificación de acceso es: ${otp}</b>`,
+      subject: 'Código de verificación OTP',
+      html: `<b>Tu código otp de acceso es: ${otp}</b>`,
     };
 
     return EmailService.transporter.sendMail(mailOptions);

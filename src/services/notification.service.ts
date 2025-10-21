@@ -16,7 +16,7 @@ export class NotificationService {
     @repository(UserRepository) private userRepository: UserRepository,
     @repository(VerificationCodeRepository)
     private verificationCodeRepository: VerificationCodeRepository,
-  ) {}
+  ) { }
 
   async send(notification: Notification, userId: number): Promise<{success: boolean; message: string}> {
     const verificationCode = this.generateVerificationCode();
@@ -24,7 +24,7 @@ export class NotificationService {
 
     switch (notification.channel) {
       case 'email':
-        await this.emailService.sendMail(notification.destination, verificationCode);
+        await this.emailService.sendEmail(notification.destination, verificationCode);
         break;
       case 'sms':
         await this.smsService.sendSms(notification.destination, verificationCode);

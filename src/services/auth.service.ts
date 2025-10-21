@@ -2,23 +2,22 @@ import {UserService as IUserService} from '@loopback/authentication';
 import {repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {UserProfile, securityId} from '@loopback/security';
-import {compare} from 'bcryptjs';
 import {sign} from 'jsonwebtoken';
 import type {StringValue} from "ms";
-import {DocumentCredentials, EmailCredentials, OtpLogin, User} from '../models';
+import {Credentialsv1, Credentialsv2, OtpLogin, User} from '../models';
 import {UserRepository, VerificationCodeRepository} from '../repositories';
 
-export class AuthService implements IUserService<User, DocumentCredentials> {
+export class AuthService implements IUserService<User, Credentialsv1> {
   constructor(
     @repository(UserRepository) public userRepository: UserRepository,
     @repository(VerificationCodeRepository) public verificationCodeRepository: VerificationCodeRepository,
-  ) {}
+  ) { }
 
-  async verifyCredentials(credentials: DocumentCredentials): Promise<User> {
+  async verifyCredentials(credentials: Credentialsv1): Promise<User> {
     return this._verifyUserByField({document: credentials.document}, credentials.password);
   }
 
-  async verifyCredentialsByEmail(credentials: EmailCredentials): Promise<User> {
+  async verifyCredentialsByEmail(credentials: Credentialsv2): Promise<User> {
     return this._verifyUserByField({email: credentials.email}, credentials.password);
   }
 
@@ -94,7 +93,7 @@ export class AuthService implements IUserService<User, DocumentCredentials> {
       );
     }
 
-    const passwordMatched = await compare(password, foundUser.password);
+    const passwordMatched = password == foundUser.password;
 
     if (!passwordMatched) {
       throw new HttpErrors.Unauthorized('Datos incorrectos.');

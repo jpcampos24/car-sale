@@ -1,12 +1,12 @@
 import {Model, model, property} from '@loopback/repository';
 
 @model()
-export class EmailCredentials extends Model {
+export class Credentialsv1 extends Model {
   @property({
     type: 'string',
     required: true,
   })
-  email: string;
+  document: string;
 
   @property({
     type: 'string',
@@ -15,13 +15,13 @@ export class EmailCredentials extends Model {
   password: string;
 
 
-  constructor(data?: Partial<EmailCredentials>) {
+  constructor(data?: Partial<Credentialsv1>) {
     super(data);
   }
 }
 
-export interface EmailCredentialsRelations {
+export interface Credentialsv1Relations {
   // describe navigational properties here
 }
 
-export type EmailCredentialsWithRelations = EmailCredentials & EmailCredentialsRelations;
+export type Credentialsv1WithRelations = Credentialsv1 & Credentialsv1Relations;
